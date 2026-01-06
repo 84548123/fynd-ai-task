@@ -1,6 +1,6 @@
 # Fynd AI Assessment - Customer Feedback System 🚀
 
-This repository contains the submission for the **Fynd AI Intern Assessment 2.0**. The project is a full-stack AI application designed to collect, analyze, and act on customer feedback in real-time using Google's Gemini 2.0 Flash model.
+This repository contains the submission for the **Fynd AI Engineer Intern Assessment 2.0**. The project is a full-stack AI application designed to collect, analyze, and act on customer feedback in real-time using Google's Gemini 2.0 Flash model.
 
 ## 🔗 Live Deployment
 - **User Dashboard (Submit Reviews):** [https://fynd-ai-feedback-system.onrender.com](https://fynd-ai-feedback-system.onrender.com)
