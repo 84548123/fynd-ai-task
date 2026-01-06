@@ -7,13 +7,12 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
-# Replace the string below with your actual API key for local testing.
-# For deployment (Render), you will set this in the "Environment Variables" section.
-# NEW CODE (Keep the quotes!)
-API_KEY = "AIzaSyAEvmxF7DZmmGC9zNjTMbjn1knFAsgZa9Y"
+# This tells the app: "Look for the key in the secure Environment Variables"
+API_KEY = os.environ.get("AIzaSyAmzRMMsYtySpShjU87t2LE5Husq6WlVds")
 
-# This print statement will prove in the logs that the key is loaded
-print(f"--- DEBUG: API KEY LOADED: {API_KEY[:10]}... ---")
+# Safety Check: If the key is missing, print an error to the logs
+if not API_KEY:
+    print("CRITICAL ERROR: GEMINI_API_KEY not found in environment variables!")
 
 genai.configure(api_key=API_KEY)
 
