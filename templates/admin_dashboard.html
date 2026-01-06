@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 2rem; background: #f8f9fa; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #343a40; color: white; text-transform: uppercase; font-size: 0.85rem; }
+        tr:hover { background: #f8f9fa; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; color: white; }
+        .stars-5 { background: #28a745; } .stars-4 { background: #17a2b8; }
+        .stars-3 { background: #ffc107; color: black; } .stars-2 { background: #fd7e14; } .stars-1 { background: #dc3545; }
+        ul { margin: 0; padding-left: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Dashboard - Live Feed</h1>
+        <button onclick="loadData()" style="padding: 10px 20px; cursor: pointer;">Refresh Data</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50px;">ID</th>
+                <th style="width: 100px;">Rating</th>
+                <th>Customer Review</th>
+                <th>AI Summary</th>
+                <th>Recommended Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            </tbody>
+    </table>
+
+    <script>
+        async function loadData() {
+            try {
+                const res = await fetch('/api/get_reviews');
+                const data = await res.json();
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+
+                data.forEach(row => {
+                    // Parse actions from JSON string
+                    let actionsList = [];
+                    try {
+                        actionsList = JSON.parse(row.admin_actions);
+                    } catch (e) { actionsList = [row.admin_actions]; }
+
+                    const actionsHtml = actionsList.map(a => `<li>${a}</li>`).join('');
+
+                    const tr = `
+                        <tr>
+                            <td>#${row.id}</td>
+                            <td><span class="badge stars-${row.stars}">${row.stars} Stars</span></td>
+                            <td>${row.review_text}</td>
+                            <td><strong>${row.admin_summary}</strong></td>
+                            <td><ul>${actionsHtml}</ul></td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += tr;
+                });
+            } catch (err) {
+                console.error("Error loading data:", err);
+            }
+        }
+
+        // Load data on page load
+        loadData();
+        // Auto-refresh every 10 seconds
+        setInterval(loadData, 10000);
+    </script>
+</body>
+</html>

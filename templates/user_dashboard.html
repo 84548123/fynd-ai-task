@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Feedback</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        label { display: block; margin-top: 15px; font-weight: 600; color: #555; }
+        select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; background: #007bff; color: white; border: none; padding: 12px; margin-top: 20px; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; }
+        .response-box { margin-top: 20px; padding: 15px; background: #e3f2fd; border-left: 5px solid #2196f3; border-radius: 4px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>We Value Your Feedback</h2>
+        <form id="reviewForm">
+            <label>Rating</label>
+            <select id="stars" required>
+                <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                <option value="4">⭐⭐⭐⭐ - Good</option>
+                <option value="3">⭐⭐⭐ - Average</option>
+                <option value="2">⭐⭐ - Poor</option>
+                <option value="1">⭐ - Terrible</option>
+            </select>
+
+            <label>Review</label>
+            <textarea id="review" rows="4" placeholder="Share your experience..." required></textarea>
+
+            <button type="submit" id="submitBtn">Submit Review</button>
+        </form>
+
+        <div id="aiResponse" class="response-box">
+            <strong>Response:</strong>
+            <p id="responseText"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const responseBox = document.getElementById('aiResponse');
+            
+            // Disable button during loading
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+            responseBox.style.display = 'none';
+
+            const stars = document.getElementById('stars').value;
+            const review = document.getElementById('review').value;
+
+            try {
+                // Call Server API
+                const res = await fetch('/api/submit_review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stars, review })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('responseText').innerText = data.ai_response;
+                    responseBox.style.display = 'block';
+                    document.getElementById('review').value = ''; // Clear text
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                alert("Failed to connect to server.");
+            } finally {
+                btn.innerText = "Submit Review";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
