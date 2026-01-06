@@ -9,7 +9,7 @@ app = Flask(__name__)
 # --- CONFIGURATION ---
 # Replace the string below with your actual API key for local testing.
 # For deployment (Render), you will set this in the "Environment Variables" section.
-API_KEY = os.environ.get("AIzaSyAEvmxF7DZmmGC9zNjTMbjn1knFAsgZa9Y")
+API_KEY = "AIzaSyAEvmxF7DZmmGC9zNjTMbjn1knFAsgZa9Y"
 
 genai.configure(api_key=API_KEY)
 
