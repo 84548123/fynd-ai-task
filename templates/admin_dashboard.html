@@ -2,76 +2,872 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Maison — Executive Management & Review Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 2rem; background: #f8f9fa; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #343a40; color: white; text-transform: uppercase; font-size: 0.85rem; }
-        tr:hover { background: #f8f9fa; }
-        .badge { padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; color: white; }
-        .stars-5 { background: #28a745; } .stars-4 { background: #17a2b8; }
-        .stars-3 { background: #ffc107; color: black; } .stars-2 { background: #fd7e14; } .stars-1 { background: #dc3545; }
-        ul { margin: 0; padding-left: 20px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --burgundy: #722F37;
+            --burgundy-dark: #5A252C;
+            --gold: #C9A84C;
+            --gold-light: #E8D5A3;
+            --gold-bg: #FCF8EE;
+            --cream: #FDF8F0;
+            --cream-dark: #F5EDE0;
+            --charcoal: #2C2C2C;
+            --charcoal-light: #5A5A5A;
+            --white: #FFFFFF;
+            --green: #2e7d32;
+            --green-bg: #e8f5e9;
+            --blue: #1565c0;
+            --blue-bg: #e3f2fd;
+            --amber: #d97706;
+            --amber-bg: #fffbeb;
+            --red: #c62828;
+            --red-bg: #ffebee;
+            --shadow-sm: 0 2px 8px rgba(44, 44, 44, 0.05);
+            --shadow: 0 6px 24px rgba(44, 44, 44, 0.08);
+            --shadow-lg: 0 16px 48px rgba(44, 44, 44, 0.14);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            color: var(--charcoal);
+            overflow-x: hidden;
+        }
+
+        /* ── Standard 1:4 Layout Ratio (Sidebar 260px : Main Content) ── */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
+            padding: 2rem 1.2rem;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+            padding: 0 0.5rem;
+        }
+        .sidebar-brand .icon { font-size: 2rem; }
+        .sidebar-brand h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            color: var(--white);
+            font-weight: 700;
+        }
+        .sidebar-brand p {
+            font-size: 0.72rem;
+            color: var(--gold-light);
+            font-weight: 300;
+            margin-top: 2px;
+        }
+        .sidebar-nav { list-style: none; flex-grow: 1; }
+        .sidebar-nav li { margin-bottom: 0.4rem; }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.88rem;
+            font-weight: 400;
+            transition: all 0.25s ease;
+        }
+        .sidebar-nav a:hover { background: rgba(255,255,255,0.12); color: white; }
+        .sidebar-nav a.active {
+            background: rgba(255,255,255,0.18);
+            color: white;
+            font-weight: 600;
+        }
+        .sidebar-footer {
+            padding: 1rem 0.5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-footer p { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+
+        /* ── Main Panel (1280px Grid) ── */
+        .main {
+            flex-grow: 1;
+            padding: 2rem 2.5rem;
+            overflow-y: auto;
+            max-width: 1400px;
+        }
+
+        /* ── Header ── */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.85rem;
+            font-weight: 700;
+        }
+        .page-header p { color: var(--charcoal-light); font-size: 0.88rem; margin-top: 2px; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .exec-report-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.4rem;
+            background: linear-gradient(135deg, var(--gold) 0%, #b88a32 100%);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px rgba(201, 168, 76, 0.35);
+        }
+        .exec-report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.45);
+        }
+        .exec-report-btn .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+        .exec-report-btn.loading .spinner { display: inline-block; }
+        .exec-report-btn.loading .btn-text { display: none; }
+        .exec-report-btn.loading .btn-loading-text { display: inline; }
+        .btn-loading-text { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.65rem 1.1rem;
+            background: var(--white);
+            border: 1.5px solid #e0d6c8;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.84rem;
+            font-weight: 500;
+            color: var(--charcoal);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .refresh-btn:hover {
+            border-color: var(--burgundy);
+            color: var(--burgundy);
+        }
+        .refresh-btn.spinning .refresh-icon { animation: spin 0.8s linear infinite; }
+
+        /* ═══════════════════════════════════════
+           AI EXECUTIVE MANAGEMENT BRIEFING PANEL
+           ═══════════════════════════════════════ */
+        .executive-briefing-panel {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--gold);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+            animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .briefing-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid #f0ece4;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .briefing-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+        .briefing-icon-badge {
+            width: 52px; height: 52px;
+            background: var(--gold-bg);
+            border: 2px solid var(--gold-light);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        .briefing-title h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--burgundy);
+        }
+        .briefing-title p {
+            font-size: 0.82rem;
+            color: var(--charcoal-light);
+            margin-top: 2px;
+        }
+
+        /* Health Score Gauge */
+        .health-score-box {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--green-bg);
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+        .health-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--green);
+            line-height: 1;
+        }
+        .health-meta {
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .briefing-overview {
+            background: var(--cream);
+            padding: 1.2rem 1.4rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.6rem;
+            border-left: 4px solid var(--gold);
+        }
+        .briefing-overview h4 {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--burgundy);
+            margin-bottom: 0.35rem;
+        }
+        .briefing-overview p {
+            font-size: 0.94rem;
+            line-height: 1.6;
+            color: var(--charcoal);
+        }
+
+        /* 2x2 Actionable Intelligence Grid */
+        .briefing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.4rem;
+            margin-bottom: 1.2rem;
+        }
+        .briefing-card {
+            background: #faf8f5;
+            border-radius: var(--radius-md);
+            padding: 1.2rem 1.3rem;
+            border: 1px solid #eadecc;
+        }
+        .briefing-card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 0.8rem;
+        }
+        .briefing-card.praises .briefing-card-title { color: var(--green); }
+        .briefing-card.pain-points .briefing-card-title { color: var(--amber); }
+        .briefing-card.chef-actions .briefing-card-title { color: var(--burgundy); }
+        .briefing-card.floor-actions .briefing-card-title { color: var(--blue); }
+
+        .briefing-card ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+        .briefing-card li {
+            font-size: 0.85rem;
+            line-height: 1.45;
+            color: var(--charcoal);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .briefing-card li .bullet { font-weight: 700; flex-shrink: 0; }
+
+        .close-briefing-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #999;
+            padding: 4px 8px;
+        }
+        .close-briefing-btn:hover { color: var(--charcoal); }
+
+        /* ── Stat Cards (1:1:1:1 Ratio) ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 1.3rem 1.4rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid rgba(224, 214, 200, 0.4);
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            flex-shrink: 0;
+        }
+        .stat-icon.purple { background: #f3e5f5; }
+        .stat-icon.gold { background: #fff8e1; }
+        .stat-icon.green { background: var(--green-bg); }
+        .stat-icon.red { background: var(--red-bg); }
+        .stat-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .stat-info p {
+            font-size: 0.78rem;
+            color: var(--charcoal-light);
+            font-weight: 400;
+        }
+
+        /* ── Filter & Search Bar ── */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .filter-pills { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+        .filter-pill {
+            padding: 0.45rem 1rem;
+            border-radius: 50px;
+            border: 1.5px solid #e0d6c8;
+            background: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--charcoal-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--burgundy);
+            color: white;
+            border-color: var(--burgundy);
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--white);
+            border: 1.5px solid #e0d6c8;
+            border-radius: var(--radius-sm);
+            padding: 0.45rem 0.9rem;
+            gap: 0.5rem;
+        }
+        .search-box:focus-within { border-color: var(--gold); }
+        .search-box input {
+            border: none;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: transparent;
+            width: 190px;
+        }
+
+        /* ── Reviews Table ── */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(224, 214, 200, 0.5);
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            background: var(--charcoal);
+            color: rgba(255,255,255,0.9);
+            padding: 1rem 1.2rem;
+            text-align: left;
+            font-size: 0.74rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        tbody tr {
+            border-bottom: 1px solid #f0ece4;
+            transition: background 0.2s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--cream); }
+        td {
+            padding: 1rem 1.2rem;
+            font-size: 0.86rem;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.76rem;
+            white-space: nowrap;
+        }
+        .badge-5 { background: var(--green-bg); color: var(--green); }
+        .badge-4 { background: var(--blue-bg); color: var(--blue); }
+        .badge-3 { background: #fff8e1; color: #f57f17; }
+        .badge-2 { background: var(--amber-bg); color: var(--amber); }
+        .badge-1 { background: var(--red-bg); color: var(--red); }
+
+        .review-text { max-width: 280px; color: var(--charcoal); }
+        .summary-text { color: var(--charcoal-light); font-style: italic; max-width: 240px; }
+        .actions-list { list-style: none; padding: 0; }
+        .actions-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: var(--charcoal-light);
+            margin-bottom: 0.25rem;
+        }
+        .actions-list li::before {
+            content: '→';
+            color: var(--burgundy);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .timestamp { font-size: 0.75rem; color: #aaa; white-space: nowrap; }
+
+        .live-dot {
+            width: 8px; height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1040px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .briefing-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { padding: 1.5rem 1rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Dashboard - Live Feed</h1>
-        <button onclick="loadData()" style="padding: 10px 20px; cursor: pointer;">Refresh Data</button>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <span class="icon">🍽️</span>
+                <div>
+                    <h2>La Maison</h2>
+                    <p>Management Portal</p>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/admin" class="active">📊 Overview & Intelligence</a></li>
+                <li><a href="/" target="_blank">✍️ Guest Feedback View ↗</a></li>
+                <li><a href="#" onclick="generateExecutiveReport()">🤖 AI Executive Briefing</a></li>
+                <li><a href="#" onclick="manualRefresh()">🔄 Refresh Data</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>© 2026 La Maison · Powered by Gemini 2.5 Flash</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <div class="page-header">
+                <div>
+                    <h1>Executive Review Intelligence</h1>
+                    <p>Real-time analytics and automated Gemini strategic briefings</p>
+                </div>
+                <div class="header-actions">
+                    <button class="exec-report-btn" id="execReportBtn" onclick="generateExecutiveReport()">
+                        <span class="spinner"></span>
+                        <span class="btn-text">🤖 Generate Executive Briefing</span>
+                        <span class="btn-loading-text">Synthesizing Intelligence...</span>
+                    </button>
+                    <button class="refresh-btn" onclick="manualRefresh()" id="refreshBtn">
+                        <span class="refresh-icon">🔄</span> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══ AI EXECUTIVE MANAGEMENT BRIEFING PANEL ═══ -->
+            <section class="executive-briefing-panel" id="executiveBriefingPanel">
+                <button class="close-briefing-btn" onclick="closeExecutiveBriefing()">✕</button>
+
+                <div class="briefing-top">
+                    <div class="briefing-title-group">
+                        <div class="briefing-icon-badge">👑</div>
+                        <div class="briefing-title">
+                            <h3>Executive Operations Briefing</h3>
+                            <p id="briefingMetaText">Synthesized across all logged customer reviews</p>
+                        </div>
+                    </div>
+                    <div class="health-score-box">
+                        <div class="health-number" id="healthScoreValue">92</div>
+                        <div>
+                            <div class="health-meta">Sentiment Health</div>
+                            <div style="font-size:0.68rem; color:#666;">Target: &gt; 85/100</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Summary -->
+                <div class="briefing-overview">
+                    <h4>Executive Summary</h4>
+                    <p id="briefingExecutiveSummary">Loading strategic overview...</p>
+                </div>
+
+                <!-- 2x2 Intelligence Matrix -->
+                <div class="briefing-grid">
+                    <!-- Top Praises -->
+                    <div class="briefing-card praises">
+                        <div class="briefing-card-title">
+                            <span>🏆</span> Guest Praises & Strengths
+                        </div>
+                        <ul id="topPraisesList"></ul>
+                    </div>
+
+                    <!-- Recurring Friction Points -->
+                    <div class="briefing-card pain-points">
+                        <div class="briefing-card-title">
+                            <span>⚠️</span> Critical Operational Friction Points
+                        </div>
+                        <ul id="painPointsList"></ul>
+                    </div>
+
+                    <!-- Kitchen / Chef Directives -->
+                    <div class="briefing-card chef-actions">
+                        <div class="briefing-card-title">
+                            <span>👨‍🍳</span> Culinary & Kitchen Directives
+                        </div>
+                        <ul id="chefActionsList"></ul>
+                    </div>
+
+                    <!-- Hospitality / Service Directives -->
+                    <div class="briefing-card floor-actions">
+                        <div class="briefing-card-title">
+                            <span>🤵</span> Floor & Hospitality Directives
+                        </div>
+                        <ul id="floorActionsList"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stat Cards (1:1:1:1 Ratio) -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">📝</div>
+                    <div class="stat-info">
+                        <h3 id="totalReviews">0</h3>
+                        <p>Total Reviews</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon gold">⭐</div>
+                    <div class="stat-info">
+                        <h3 id="avgRating">0.0</h3>
+                        <p>Average Rating</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">😊</div>
+                    <div class="stat-info">
+                        <h3 id="positiveCount">0</h3>
+                        <p>Positive (4-5 ⭐)</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">😟</div>
+                    <div class="stat-info">
+                        <h3 id="negativeCount">0</h3>
+                        <p>Needs Attention (1-2 ⭐)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter & Search Bar -->
+            <div class="filter-bar">
+                <div class="filter-pills">
+                    <button class="filter-pill active" onclick="filterReviews('all', this)">All</button>
+                    <button class="filter-pill" onclick="filterReviews(5, this)">⭐ 5</button>
+                    <button class="filter-pill" onclick="filterReviews(4, this)">⭐ 4</button>
+                    <button class="filter-pill" onclick="filterReviews(3, this)">⭐ 3</button>
+                    <button class="filter-pill" onclick="filterReviews(2, this)">⭐ 2</button>
+                    <button class="filter-pill" onclick="filterReviews(1, this)">⭐ 1</button>
+                </div>
+                <div class="search-box">
+                    <span>🔍</span>
+                    <input type="text" placeholder="Search reviews..." id="searchInput" oninput="applyFilters()">
+                </div>
+            </div>
+
+            <!-- Reviews Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 55px;">#</th>
+                            <th style="width: 120px;">Rating</th>
+                            <th>Customer Feedback</th>
+                            <th>AI Summary</th>
+                            <th>Action Directives</th>
+                            <th style="width: 95px;">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+                <div id="emptyState" style="display:none; text-align:center; padding:4rem 2rem;">
+                    <div style="font-size:2.5rem; opacity:0.4;">🍽️</div>
+                    <h3 style="margin-top:0.5rem;">No Reviews Found</h3>
+                    <p style="color:#aaa; font-size:0.85rem;">Reviews will appear here as guests submit them.</p>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 50px;">ID</th>
-                <th style="width: 100px;">Rating</th>
-                <th>Customer Review</th>
-                <th>AI Summary</th>
-                <th>Recommended Actions</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            </tbody>
-    </table>
-
     <script>
+        let allReviews = [];
+        let currentFilter = 'all';
+
+        const starLabels = { 5: 'Excellent', 4: 'Good', 3: 'Average', 2: 'Poor', 1: 'Terrible' };
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '—';
+            const d = new Date(timestamp + 'Z');
+            const diffMin = Math.floor((new Date() - d) / 60000);
+            if (diffMin < 1) return 'Just now';
+            if (diffMin < 60) return diffMin + 'm ago';
+            const diffHr = Math.floor(diffMin / 60);
+            if (diffHr < 24) return diffHr + 'h ago';
+            return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        }
+
+        function updateStats(reviews) {
+            document.getElementById('totalReviews').textContent = reviews.length;
+            const avg = reviews.length
+                ? (reviews.reduce((sum, r) => sum + r.stars, 0) / reviews.length).toFixed(1)
+                : '0.0';
+            document.getElementById('avgRating').textContent = avg;
+            document.getElementById('positiveCount').textContent = reviews.filter(r => r.stars >= 4).length;
+            document.getElementById('negativeCount').textContent = reviews.filter(r => r.stars <= 2).length;
+        }
+
+        function renderTable(reviews) {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (reviews.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            tbody.innerHTML = reviews.map(row => {
+                let actionsList = [];
+                try { actionsList = JSON.parse(row.admin_actions); }
+                catch(e) { actionsList = [row.admin_actions]; }
+
+                const actionsHtml = actionsList.map(a => `<li>${a}</li>`).join('');
+
+                return `
+                    <tr>
+                        <td><strong>#${row.id}</strong></td>
+                        <td><span class="badge badge-${row.stars}">⭐ ${row.stars} ${starLabels[row.stars] || ''}</span></td>
+                        <td class="review-text">${row.review_text}</td>
+                        <td class="summary-text">${row.admin_summary}</td>
+                        <td><ul class="actions-list">${actionsHtml}</ul></td>
+                        <td class="timestamp">${formatTime(row.timestamp)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function applyFilters() {
+            let filtered = allReviews;
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(r => r.stars === currentFilter);
+            }
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (query) {
+                filtered = filtered.filter(r =>
+                    r.review_text.toLowerCase().includes(query) ||
+                    (r.admin_summary && r.admin_summary.toLowerCase().includes(query))
+                );
+            }
+            renderTable(filtered);
+        }
+
+        function filterReviews(star, el) {
+            currentFilter = star;
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+            applyFilters();
+        }
+
         async function loadData() {
             try {
                 const res = await fetch('/api/get_reviews');
                 const data = await res.json();
-                const tbody = document.getElementById('tableBody');
-                tbody.innerHTML = '';
-
-                data.forEach(row => {
-                    // Parse actions from JSON string
-                    let actionsList = [];
-                    try {
-                        actionsList = JSON.parse(row.admin_actions);
-                    } catch (e) { actionsList = [row.admin_actions]; }
-
-                    const actionsHtml = actionsList.map(a => `<li>${a}</li>`).join('');
-
-                    const tr = `
-                        <tr>
-                            <td>#${row.id}</td>
-                            <td><span class="badge stars-${row.stars}">${row.stars} Stars</span></td>
-                            <td>${row.review_text}</td>
-                            <td><strong>${row.admin_summary}</strong></td>
-                            <td><ul>${actionsHtml}</ul></td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += tr;
-                });
+                allReviews = data;
+                updateStats(data);
+                applyFilters();
             } catch (err) {
-                console.error("Error loading data:", err);
+                console.error('Error loading reviews:', err);
             }
         }
 
-        // Load data on page load
+        function manualRefresh() {
+            const btn = document.getElementById('refreshBtn');
+            btn.classList.add('spinning');
+            loadData().then(() => {
+                setTimeout(() => btn.classList.remove('spinning'), 800);
+            });
+        }
+
+        // ═══════════════════════════════════════
+        // 1-CLICK AI EXECUTIVE BRIEFING
+        // ═══════════════════════════════════════
+        async function generateExecutiveReport() {
+            const btn = document.getElementById('execReportBtn');
+            const panel = document.getElementById('executiveBriefingPanel');
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/generate_executive_report', { method: 'POST' });
+                const data = await res.json();
+
+                if (data.success && data.report) {
+                    const r = data.report;
+                    document.getElementById('healthScoreValue').textContent = r.sentiment_health_score || 90;
+                    document.getElementById('briefingExecutiveSummary').textContent = r.executive_summary;
+                    document.getElementById('briefingMetaText').textContent = `Synthesized across ${data.reviews_analyzed} logged customer reviews using Gemini 2.5 Flash`;
+
+                    document.getElementById('topPraisesList').innerHTML = (r.top_praises || []).map(item => `
+                        <li><span class="bullet" style="color:var(--green);">✓</span> ${item}</li>
+                    `).join('');
+
+                    document.getElementById('painPointsList').innerHTML = (r.recurring_pain_points || []).map(item => `
+                        <li><span class="bullet" style="color:var(--amber);">!</span> ${item}</li>
+                    `).join('');
+
+                    document.getElementById('chefActionsList').innerHTML = (r.chef_action_items || []).map(item => `
+                        <li><span class="bullet" style="color:var(--burgundy);">→</span> ${item}</li>
+                    `).join('');
+
+                    document.getElementById('floorActionsList').innerHTML = (r.hospitality_action_items || []).map(item => `
+                        <li><span class="bullet" style="color:var(--blue);">→</span> ${item}</li>
+                    `).join('');
+
+                    panel.style.display = 'block';
+                    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } catch (e) {
+                console.error('Error generating executive briefing:', e);
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+
+        function closeExecutiveBriefing() {
+            document.getElementById('executiveBriefingPanel').style.display = 'none';
+        }
+
+        // ═══ INIT ═══
         loadData();
-        // Auto-refresh every 10 seconds
         setInterval(loadData, 10000);
     </script>
 </body>

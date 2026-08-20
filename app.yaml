@@ -1,0 +1,11 @@
+runtime: python312
+entrypoint: gunicorn -b :$PORT -w 2 --threads 4 --timeout 120 app:app
+
+instance_class: F1
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 2
+
+env_variables:
+  GEMINI_API_KEY: "AIzaSyAmzRMMsYtySpShjU87t2LE5Husq6WlVds"
